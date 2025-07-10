@@ -2,7 +2,7 @@
   "name": "sport-new",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://giuliodambrosio.github.io/sportnew",
+  "homepage": "https://giulioelcapo.github.io/sportnew",
   "dependencies": {
     "@supabase/supabase-js": "^2.50.4",
     "@testing-library/dom": "^10.4.0",
@@ -14,7 +14,7 @@
     "react-dom": "^18.2.0",
     "react-icons": "^4.8.0",
     "react-router-dom": "^7.6.3",
-    "react-scripts": "^0.0.0",
+    "react-scripts": "5.0.1",
     "recharts": "^2.15.4",
     "web-vitals": "^2.1.4"
   },
