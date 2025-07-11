@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { createClient } from "@supabase/supabase-js";
@@ -52,7 +51,11 @@ export default function PlayerDetail() {
       try {
         const { data: stats } = await supabase.from("Minuti giocati").select("Name, minutes_played, games_played, Goal");
         const foundPlayer = stats.find((p) => p.Name?.trim().toLowerCase() === cleanName);
-        if (!foundPlayer) return setNotFound(true);
+        if (!foundPlayer) {
+          setNotFound(true);
+          setLoading(false);
+          return;
+        }
 
         setPlayerData(foundPlayer);
 
@@ -164,54 +167,18 @@ export default function PlayerDetail() {
               </thead>
               <tbody>
                 <tr>
-                  <td style={cell}> {fitnessData.sprint_10m ?? "-"} </td>
-                  <td style={cell}> {fitnessData.sprint_30m ?? "-"} </td>
-                  <td style={cell}> {fitnessData.SJ ?? "-"} </td>
-                  <td style={cell}> {fitnessData.CMJ ?? "-"} </td>
-                  <td style={cell}> {fitnessData.date ?? "-"} </td>
+                  <td style={cell}>{fitnessData.sprint_10m ?? "-"}</td>
+                  <td style={cell}>{fitnessData.sprint_30m ?? "-"}</td>
+                  <td style={cell}>{fitnessData.SJ ?? "-"}</td>
+                  <td style={cell}>{fitnessData.CMJ ?? "-"}</td>
+                  <td style={cell}>{fitnessData.date ?? "-"}</td>
                 </tr>
               </tbody>
             </table>
           </div>
         ) : <p>No fitness test data available.</p>}
       </section>
-      {showModal && (
-        <div style={{
-          position: "fixed",
-          top: 0, left: 0, right: 0, bottom: 0,
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
-          display: "flex", justifyContent: "center", alignItems: "center",
-          zIndex: 100
-        }}>
-          <div style={{
-            backgroundColor: "#fff", padding: "2rem", borderRadius: "10px",
-            minWidth: "300px", position: "relative"
-          }}>
-            <button onClick={() => setShowModal(false)} style={{
-              position: "absolute", top: "10px", right: "10px", border: "none",
-              background: "transparent", fontSize: "1.2rem", cursor: "pointer"
-            }}>✖</button>
 
-            <h2>Add New Player</h2>
-            <form onSubmit={(e) => {
-              e.preventDefault();
-              // Qui potresti chiamare una funzione per salvare il nuovo giocatore su Supabase
-              console.log("Nome:", newName, "Posizione:", newPosition);
-              setShowModal(false);
-            }}>
-              <div style={{ marginBottom: "1rem" }}>
-                <label>Nome:</label>
-                <input type="text" value={newName} onChange={(e) => setNewName(e.target.value)} style={{ width: "100%" }} />
-              </div>
-              <div style={{ marginBottom: "1rem" }}>
-                <label>Posizione:</label>
-                <input type="text" value={newPosition} onChange={(e) => setNewPosition(e.target.value)} style={{ width: "100%" }} />
-              </div>
-              <button type="submit" style={{ padding: "0.5rem 1rem" }}>Salva</button>
-            </form>
-          </div>
-        </div>
-      )}
       <section style={{ marginTop: "3rem" }}>
         <h3>🩹 Injury History</h3>
         {injuries.length > 0 ? (
@@ -219,39 +186,102 @@ export default function PlayerDetail() {
             {injuries.map((inj, i) => (
               <div key={i} style={{
                 padding: "1rem", backgroundColor: "#fff", borderRadius: "10px",
-                boxShadow: "0 2px 6px rgba(0,0,0,0.08)", lineHeight: "1.5"
+                boxShadow: "0 2px 6px rgba(0,0,0,0.08)", lineHeight: "1.4"
               }}>
-                <strong>{inj.date}</strong><br />
-                <span>{inj.Body_part} - {inj.Injury_type}</span><br />
-                <span>Severity: <strong>{inj.Severety}</strong></span>
+                <strong>{inj.Body_part}</strong><br />
+                Injury: {inj.Injury_type}<br />
+                Severity: {inj.Severety}<br />
+                Date: {inj.date}
               </div>
             ))}
           </div>
-        ) : <p>No injuries recorded.</p>}
+        ) : <p>No injury data available.</p>}
       </section>
+
+      {showModal && (
+        <AddPlayerModal
+          onClose={() => setShowModal(false)}
+          onAdd={async () => {
+            if (newName.trim() === "" || newPosition.trim() === "") {
+              alert("Please enter a name and position");
+              return;
+            }
+            await supabase.from("Players").insert([{ Name: newName.trim() }]);
+            await supabase.from("Position").insert([{ Name: newName.trim(), Position: newPosition.trim() }]);
+            setNewName("");
+            setNewPosition("");
+            setShowModal(false);
+            // Optionally refresh players list
+            const { data: allPlayers } = await supabase.from("Players").select("Name");
+            setPlayers(allPlayers || []);
+          }}
+          newName={newName}
+          setNewName={setNewName}
+          newPosition={newPosition}
+          setNewPosition={setNewPosition}
+        />
+      )}
     </main>
   );
 }
 
+const cellHeader = {
+  padding: "10px",
+  borderBottom: "1px solid #ddd",
+  backgroundColor: "#eee",
+};
+
+const cell = {
+  padding: "8px",
+  borderBottom: "1px solid #ddd",
+};
+
+// Component for statistic cards
 function StatCard({ title, value, bgColor }) {
   return (
     <div style={{
-      backgroundColor: bgColor, padding: "1rem", borderRadius: "10px",
-      flex: "1", minWidth: "100px", textAlign: "center", boxShadow: "0 2px 6px rgba(0,0,0,0.1)"
+      backgroundColor: bgColor,
+      borderRadius: "10px",
+      padding: "1rem 2rem",
+      textAlign: "center",
+      fontWeight: "600",
+      fontSize: "1.25rem",
+      width: "120px"
     }}>
-      <h4 style={{ margin: "0 0 0.5rem" }}>{title}</h4>
-      <p style={{ fontSize: "1.2rem", fontWeight: "bold", margin: 0 }}>{value ?? "-"}</p>
+      <div>{title}</div>
+      <div>{value ?? "-"}</div>
     </div>
   );
 }
 
-const cellHeader = {
-  padding: "0.75rem",
-  borderBottom: "1px solid #ddd",
-  fontWeight: "bold"
-};
-
-const cell = {
-  padding: "0.75rem",
-  borderBottom: "1px solid #eee"
-};
+function AddPlayerModal({ onClose, onAdd, newName, setNewName, newPosition, setNewPosition }) {
+  return (
+    <div style={{
+      position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh",
+      backgroundColor: "rgba(0,0,0,0.3)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 1000
+    }}>
+      <div style={{
+        backgroundColor: "#fff", borderRadius: "10px", padding: "2rem",
+        width: "300px", boxShadow: "0 2px 10px rgba(0,0,0,0.2)"
+      }}>
+        <h3>Add New Player</h3>
+        <input
+          type="text"
+          placeholder="Name"
+          value={newName}
+          onChange={(e) => setNewName(e.target.value)}
+          style={{ width: "100%", marginBottom: "1rem", padding: "0.5rem" }}
+        />
+        <input
+          type="text"
+          placeholder="Position"
+          value={newPosition}
+          onChange={(e) => setNewPosition(e.target.value)}
+          style={{ width: "100%", marginBottom: "1rem", padding: "0.5rem" }}
+        />
+        <button onClick={onAdd} style={{ marginRight: "1rem" }}>Add</button>
+        <button onClick={onClose}>Cancel</button>
+      </div>
+    </div>
+  );
+}
