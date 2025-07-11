@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { createClient } from "@supabase/supabase-js";
@@ -174,7 +175,43 @@ export default function PlayerDetail() {
           </div>
         ) : <p>No fitness test data available.</p>}
       </section>
+      {showModal && (
+        <div style={{
+          position: "fixed",
+          top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          display: "flex", justifyContent: "center", alignItems: "center",
+          zIndex: 100
+        }}>
+          <div style={{
+            backgroundColor: "#fff", padding: "2rem", borderRadius: "10px",
+            minWidth: "300px", position: "relative"
+          }}>
+            <button onClick={() => setShowModal(false)} style={{
+              position: "absolute", top: "10px", right: "10px", border: "none",
+              background: "transparent", fontSize: "1.2rem", cursor: "pointer"
+            }}>✖</button>
 
+            <h2>Add New Player</h2>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              // Qui potresti chiamare una funzione per salvare il nuovo giocatore su Supabase
+              console.log("Nome:", newName, "Posizione:", newPosition);
+              setShowModal(false);
+            }}>
+              <div style={{ marginBottom: "1rem" }}>
+                <label>Nome:</label>
+                <input type="text" value={newName} onChange={(e) => setNewName(e.target.value)} style={{ width: "100%" }} />
+              </div>
+              <div style={{ marginBottom: "1rem" }}>
+                <label>Posizione:</label>
+                <input type="text" value={newPosition} onChange={(e) => setNewPosition(e.target.value)} style={{ width: "100%" }} />
+              </div>
+              <button type="submit" style={{ padding: "0.5rem 1rem" }}>Salva</button>
+            </form>
+          </div>
+        </div>
+      )}
       <section style={{ marginTop: "3rem" }}>
         <h3>🩹 Injury History</h3>
         {injuries.length > 0 ? (
