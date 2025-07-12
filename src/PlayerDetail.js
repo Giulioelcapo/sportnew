@@ -116,7 +116,7 @@ export default function PlayerDetail() {
             )}
           </div>
         </div>
-        <img src="/images/logo.png" alt="Logo" style={{ height: "200px", objectFit: "contain" }} />
+        <img src="/images/logo.png" alt="logo" style={{ height: "200px", objectFit: "contain" }} />
       </div>
 
       <h2>{playerData?.Name}</h2>
@@ -285,3 +285,4 @@ function AddPlayerModal({ onClose, onAdd, newName, setNewName, newPosition, setN
     </div>
   );
 }
+
