@@ -1,5 +1,6 @@
+
 import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import Layout from "./Layout";
 import Calendar from "./Calendar";
@@ -25,7 +26,7 @@ function Profile() {
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         {/* Rotta pubblica: login */}
         <Route path="/login" element={<Login />} />
@@ -58,6 +59,6 @@ export default function App() {
         {/* Rotta fallback: qualsiasi altra cosa va al login */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
