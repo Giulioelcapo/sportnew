@@ -95,7 +95,7 @@ export default function ACWRPage() {
 
             const acuteLoad = weeklyLoads[3];
             const chronicLoad = weeklyLoads.reduce((acc, val) => acc + val, 0) / 4;
- const acwr = acuteLoad > 0 ? (chronicLoad / acuteLoad).toFixed(2) : '-';
+            const acwr = acuteLoad > 0 ? (chronicLoad / acuteLoad).toFixed(2) : '-';
 
             newState[player.Name] = {
                 ...newState[player.Name],
@@ -308,13 +308,13 @@ export default function ACWRPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {chartData.map((d, i) => (
-                                <tr key={i}>
+                            {chartData.map((row, index) => (
+                                <tr key={index}>
                                     <td>{viewPlayer}</td>
-                                    <td>{d.date}</td>
-                                    <td>{d.daily_load}</td>
-                                    <td>{d.weekly_load}</td>
-                                    <td>{d.ACWR}</td>
+                                    <td>{row.date}</td>
+                                    <td>{row.daily_load}</td>
+                                    <td>{row.weekly_load}</td>
+                                    <td>{row.ACWR}</td>
                                 </tr>
                             ))}
                         </tbody>
