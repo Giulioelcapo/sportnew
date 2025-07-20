@@ -95,7 +95,7 @@ export default function ACWRPage() {
 
             const acuteLoad = weeklyLoads[3];
             const chronicLoad = weeklyLoads.reduce((acc, val) => acc + val, 0) / 4;
-            const acwr = chronicLoad > 0 ? (acuteLoad / chronicLoad).toFixed(2) : '-';
+ const acwr = acuteLoad > 0 ? (chronicLoad / acuteLoad).toFixed(2) : '-';
 
             newState[player.Name] = {
                 ...newState[player.Name],
