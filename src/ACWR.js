@@ -78,21 +78,21 @@ export default function ACWRPage() {
             const weeklyLoads = [];
 
             for (let i = 0; i < 4; i++) {
-                const weekStart = new Date();
-                weekStart.setDate(weekStart.getDate() - (7 * (i + 1)));
-                const weekEnd = new Date();
-                weekEnd.setDate(weekEnd.getDate() - (7 * i) - 1);
+                const start = new Date();
+                Start.setDate(Start.getDate() - (7 * (i + 1)) + 1);
+                const end = new Date();
+                weekEnd.setDate(end.getDate() - (7 * i) - 1);
 
                 const weekLoad = playerLoads
                     .filter(w => {
                         const wDate = new Date(w.date);
-                        return wDate >= weekStart && wDate <= weekEnd;
+                        return wDate >= start && wDate <= end;
                     })
                     .reduce((acc, w) => acc + w.daily_load, 0);
 
-                weeklyLoads.unshift(weekLoad);
+                weeklyLoads.push(weekLoad);
             }
-            const acuteLoad = weeklyLoads[weeklyLoads.length - 1];
+            const acuteLoad = weeklyLoads[0];
             const chronicLoad = weeklyLoads.reduce((acc, val) => acc + val, 0) / 4;
             const acwr = chronicLoad > 0 ? (acuteLoad / chronicLoad).toFixed(2) : '-';
 
