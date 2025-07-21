@@ -79,9 +79,9 @@ export default function ACWRPage() {
 
             for (let i = 0; i < 4; i++) {
                 const start = new Date();
-                Start.setDate(Start.getDate() - (7 * (i + 1)) + 1);
+                start.setDate(start.getDate() - (7 * (i + 1)) + 1);
                 const end = new Date();
-                weekEnd.setDate(end.getDate() - (7 * i) - 1);
+                end.setDate(end.getDate() - (7 * i) - 1);
 
                 const weekLoad = playerLoads
                     .filter(w => {
